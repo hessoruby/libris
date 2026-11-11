@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Library · Libris</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Slab:wght@600&display=swap" rel="stylesheet">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/common.js?v=libris" defer></script>
+  <script src="js/library.js" defer></script>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <div class="main">
+      <header class="topbar">
+        <label class="topbar-search">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 20 20"/></svg>
+          <span class="visually-hidden">Search books</span>
+          <input id="search" type="search" placeholder="Start searching..." autocomplete="off">
+        </label>
+        <div id="chip"></div>
+      </header>
+
+      <main class="content">
+        <div class="shelf-head">
+          <div class="shelf-bar">
+            <h1>My Books</h1>
+            <span class="count" id="count" aria-label="Number of books">0</span>
+          </div>
+
+          <div class="shelf-tools">
+            <button class="btn" type="button" id="view-btn"></button>
+
+            <div class="sort-group">
+              <label class="visually-hidden" for="sort">Sort by</label>
+              <select class="select" id="sort">
+                <option value="title">Title</option>
+                <option value="author">Author</option>
+                <option value="added">Added</option>
+              </select>
+              <button class="icon-sq" type="button" id="dir-btn"></button>
+            </div>
+
+            <div class="filters">
+              <button class="btn btn-primary" type="button" id="filter-btn" aria-expanded="false" aria-controls="filters-pop"></button>
+              <div class="filters-pop" id="filters-pop" hidden>
+                <h2>Category</h2>
+                <div id="category-list"></div>
+                <h2>Copies</h2>
+                <label class="check"><input type="checkbox" id="free-only"> Only books with a free copy</label>
+                <button class="btn btn-small" type="button" id="clear-filters">Clear filters</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <nav aria-label="Jump to a letter"><ul class="alpha" id="alpha"></ul></nav>
+
+        <div id="shelf" aria-live="polite"></div>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

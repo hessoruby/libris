@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Add Items · Libris</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Slab:wght@600&display=swap" rel="stylesheet">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/common.js?v=libris" defer></script>
+  <script src="js/add-book.js?v=libris" defer></script>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <div class="main">
+      <header class="topbar"><div id="chip"></div></header>
+
+      <main class="content">
+        <h1 class="page-title" id="page-title">Add Items</h1>
+
+        <form class="book-form" id="book-form" novalidate>
+          <div class="preview">
+            <div id="preview"></div>
+            <span>Cover preview</span>
+          </div>
+
+          <div>
+            <div class="form-grid">
+              <label class="field span-2">
+                <span>Title <span class="req" aria-hidden="true">*</span></span>
+                <input class="input" name="title" required maxlength="200">
+              </label>
+              <label class="field">
+                <span>Author <span class="req" aria-hidden="true">*</span></span>
+                <input class="input" name="author" required maxlength="120">
+              </label>
+              <label class="field">
+                <span>Category</span>
+                <input class="input" name="category" list="category-options" maxlength="60" placeholder="Fiction, Textbook ...">
+                <datalist id="category-options"></datalist>
+              </label>
+              <label class="field">
+                <span>Publisher</span>
+                <input class="input" name="publisher" maxlength="120">
+              </label>
+              <label class="field">
+                <span>Year</span>
+                <input class="input" name="year" type="number" inputmode="numeric" min="1000" step="1">
+              </label>
+              <label class="field">
+                <span>Pages</span>
+                <input class="input" name="pages" type="number" inputmode="numeric" min="1" step="1">
+              </label>
+              <label class="field">
+                <span>ISBN (10 or 13 digits)</span>
+                <input class="input" name="isbn" inputmode="numeric" maxlength="17">
+              </label>
+              <label class="field">
+                <span>Shelf</span>
+                <input class="input" name="shelf" maxlength="20" placeholder="P-11">
+              </label>
+              <label class="field">
+                <span>Copies <span class="req" aria-hidden="true">*</span></span>
+                <input class="input" name="copies" type="number" inputmode="numeric" min="1" max="1000" step="1" value="1" required>
+              </label>
+              <label class="field span-2">
+                <span>Description</span>
+                <textarea class="textarea" name="description" maxlength="2000"></textarea>
+              </label>
+              <label class="field span-2">
+                <span>Notes (only the librarian sees these)</span>
+                <textarea class="textarea" name="notes" maxlength="2000"></textarea>
+              </label>
+            </div>
+
+            <p class="message is-error" id="form-message" role="alert"></p>
+
+            <div class="form-actions">
+              <button class="btn btn-primary" type="submit" id="save-btn">Save Book</button>
+              <a class="btn" id="cancel-link" href="library.html">Cancel</a>
+            </div>
+          </div>
+        </form>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

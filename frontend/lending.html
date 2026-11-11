@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lending · Libris</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Slab:wght@600&display=swap" rel="stylesheet">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/common.js?v=libris" defer></script>
+  <script src="js/lending.js?v=libris" defer></script>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <div class="main">
+      <header class="topbar">
+        <h1 class="page-title" id="page-title">Lending</h1>
+        <div id="chip"></div>
+      </header>
+
+      <main class="content">
+        <div class="tabs" role="tablist" aria-label="Lending sections">
+          <button class="tab" type="button" role="tab" id="tab-lending" aria-controls="panel-lending" aria-selected="true">Lending</button>
+          <button class="tab" type="button" role="tab" id="tab-checkouts" aria-controls="panel-checkouts" aria-selected="false" tabindex="-1">Checkouts</button>
+          <button class="tab" type="button" role="tab" id="tab-patrons" aria-controls="panel-patrons" aria-selected="false" tabindex="-1">Patrons</button>
+        </div>
+
+        <section id="panel-lending" role="tabpanel" aria-labelledby="tab-lending">
+          <div class="lend-grid">
+            <div>
+              <label class="label" for="item-search" id="item-label">Lending Item</label>
+              <div class="search-box">
+                <input class="input" id="item-search" placeholder="Barcode / Title" autocomplete="off" aria-controls="item-results">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 20 20"/></svg>
+                <ul class="search-results" id="item-results" aria-label="Matching books" hidden></ul>
+              </div>
+
+              <div class="date-row" id="date-row">
+                <label>
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>
+                  Checked Out: <input type="date" id="issue-date">
+                </label>
+                <label>Due Date: <input type="date" id="due-date"></label>
+              </div>
+
+              <ul class="lend-items" id="lend-items" aria-live="polite"></ul>
+            </div>
+
+            <div>
+              <label class="label" for="patron-search">Patron</label>
+              <div class="search-box">
+                <input class="input" id="patron-search" placeholder="Card / Name / Email" autocomplete="off" aria-controls="patron-results">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 20 20"/></svg>
+                <ul class="search-results" id="patron-results" aria-label="Matching patrons" hidden></ul>
+              </div>
+
+              <div id="patron-box" aria-live="polite"></div>
+
+              <button class="btn btn-primary btn-wide" type="button" id="checkout-btn" disabled>Checkout</button>
+              <p style="margin: 12px 0 0;">
+                <button class="btn btn-tiny" type="button" id="mode-btn" aria-pressed="false">Check In Mode</button>
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section id="panel-checkouts" role="tabpanel" aria-labelledby="tab-checkouts" hidden>
+          <div class="toolbar-row">
+            <label class="field">
+              <span class="hint">Show which checkouts</span>
+              <select class="select" id="status-filter">
+                <option value="active">Currently out</option>
+                <option value="overdue">Overdue only</option>
+                <option value="returned">Returned</option>
+                <option value="all">All checkouts</option>
+              </select>
+            </label>
+            <div class="search-box" style="width: 210px;">
+              <label class="visually-hidden" for="checkout-search">Search checkouts</label>
+              <input class="input" id="checkout-search" type="search" placeholder="Search items" autocomplete="off">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 20 20"/></svg>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table class="table" id="checkouts-table">
+              <caption class="visually-hidden">Checked out books</caption>
+              <thead></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="table-foot">
+            <span id="showing" aria-live="polite"></span>
+            <nav class="pager" id="pager" aria-label="Pages"></nav>
+          </div>
+        </section>
+
+        <section id="panel-patrons" role="tabpanel" aria-labelledby="tab-patrons" hidden>
+          <form class="patron-form" id="patron-form" novalidate>
+            <h2 id="patron-form-title">Add Patron</h2>
+            <label class="field"><span>First name <span class="req" aria-hidden="true">*</span></span>
+              <input class="input" name="first_name" required maxlength="60" autocomplete="off"></label>
+            <label class="field"><span>Last name <span class="req" aria-hidden="true">*</span></span>
+              <input class="input" name="last_name" required maxlength="60" autocomplete="off"></label>
+            <label class="field"><span>AP number <span class="req" aria-hidden="true">*</span></span>
+              <input class="input" name="ap_number" required maxlength="13" placeholder="AP24110010479" autocomplete="off"></label>
+            <label class="field"><span>Email</span>
+              <input class="input" name="email" type="email" maxlength="120" autocomplete="off"></label>
+            <label class="field"><span>Phone</span>
+              <input class="input" name="phone" type="tel" maxlength="15" autocomplete="off"></label>
+            <div class="form-actions">
+              <button class="btn btn-primary" type="submit" id="patron-save">Add Patron</button>
+              <button class="btn" type="button" id="patron-cancel" hidden>Cancel</button>
+            </div>
+            <p class="message is-error" id="patron-message" role="alert" style="grid-column: 1 / -1;"></p>
+          </form>
+
+          <div class="toolbar-row">
+            <div class="search-box" style="width: 260px;">
+              <label class="visually-hidden" for="patron-filter">Search patrons</label>
+              <input class="input" id="patron-filter" type="search" placeholder="Search patrons" autocomplete="off">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 20 20"/></svg>
+            </div>
+            <span class="muted" id="patron-count"></span>
+          </div>
+
+          <div class="table-wrap">
+            <table class="table">
+              <caption class="visually-hidden">Library patrons</caption>
+              <thead>
+                <tr>
+                  <th><span>First</span></th><th><span>Last</span></th><th><span>AP number</span></th><th><span>Email</span></th>
+                  <th><span>Phone</span></th><th><span>Card</span></th><th><span>Books out</span></th>
+                  <th><span>Joined</span></th><th><span class="visually-hidden">Actions</span></th>
+                </tr>
+              </thead>
+              <tbody id="patron-rows"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+</body>
+</html>
