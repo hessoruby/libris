@@ -1,6 +1,16 @@
 const form = document.getElementById("login-form");
 const message = document.getElementById("login-message");
 const loginButton = document.getElementById("login-btn");
+const password = document.getElementById("pwd");
+const passwordButton = document.getElementById("password-toggle");
+
+function showPassword(show) {
+  password.type = show ? "text" : "password";
+  passwordButton.setAttribute("aria-label", show ? "Hide password" : "Show password");
+  passwordButton.setAttribute("aria-pressed", String(show));
+}
+
+passwordButton.addEventListener("click", () => showPassword(password.type === "password"));
 
 function showMessage(text, isError) {
   message.textContent = text;
@@ -35,4 +45,7 @@ form.addEventListener("submit", async (event) => {
   }
 });
 
-form.addEventListener("reset", () => showMessage("", false));
+form.addEventListener("reset", () => {
+  showMessage("", false);
+  showPassword(false);
+});

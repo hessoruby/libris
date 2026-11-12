@@ -8,9 +8,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Slab:wght@600&display=swap" rel="stylesheet">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=password-eye">
   <script src="js/common.js?v=libris" defer></script>
-  <script src="js/login.js" defer></script>
+  <script src="js/login.js?v=password-eye" defer></script>
 </head>
 <body>
   <main class="login-page">
@@ -26,10 +26,15 @@
           <span>User Name</span>
           <input class="input" id="uname" name="uname" autocomplete="username" required>
         </label>
-        <label class="field">
-          <span>Password</span>
-          <input class="input" id="pwd" name="pwd" type="password" autocomplete="current-password" required>
-        </label>
+        <div class="field">
+          <label class="label" for="pwd">Password</label>
+          <div class="password-box">
+            <input class="input" id="pwd" name="pwd" type="password" autocomplete="current-password" required>
+            <button class="password-toggle" id="password-toggle" type="button" aria-label="Show password" aria-controls="pwd" aria-pressed="false">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path class="eye-slash" d="m3 3 18 18"/></svg>
+            </button>
+          </div>
+        </div>
 
         <p class="message" id="login-message" role="alert"></p>
 

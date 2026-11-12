@@ -404,6 +404,13 @@ h1, h2, h3 { margin: 0; text-wrap: balance; }
 .login-box form { display: grid; gap: 14px; }
 .login-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px; }
 .login-note { margin-top: 18px; font-size: 12px; color: var(--muted); }
+.password-box { position: relative; }
+.password-box .input { padding-right: 44px; }
+.password-toggle { position: absolute; right: 0; top: 0; width: 40px; height: 36px; display: grid; place-items: center; border: 0; background: transparent; color: var(--muted); cursor: pointer; border-radius: var(--radius); }
+.password-toggle:hover { color: var(--accent); }
+.password-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: -3px; }
+.eye-slash { display: none; }
+.password-toggle[aria-pressed="true"] .eye-slash { display: block; }
 
 @media (max-width: 900px) {
   .app { grid-template-columns: minmax(0, 1fr); }
