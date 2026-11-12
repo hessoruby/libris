@@ -17,7 +17,7 @@ class MemberHandler extends RequestHandler
                                 "select " + COLUMNS + " from members m "
                               + "where (m.first_name || ' ' || m.last_name) like ? or m.email like ? "
                               + "or m.phone like ? or printf('M%04d', m.id) like ? or m.ap_number like ? "
-                              + "order by m.first_name collate nocase, m.last_name collate nocase", q, q, q, q, q);
+                              + "order by lower(m.first_name), lower(m.last_name)", q, q, q, q, q);
                         return WebHelper.json(WebHelper.map("members", members));
                 }
                 String action = required(p, "action", "Action");

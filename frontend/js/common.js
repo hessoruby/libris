@@ -11,7 +11,7 @@ async function api(path, data) {
   try {
     response = await fetch(path, options);
   } catch (networkError) {
-    throw new Error("Cannot reach the server. Is JavaApp running in the terminal?");
+    throw new Error("Cannot reach the server. Please try again.");
   }
   if (response.status === 401) {
     window.location.href = "login.html";

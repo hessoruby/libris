@@ -1,0 +1,12 @@
+FROM eclipse-temurin:21-jdk-jammy AS build
+WORKDIR /app/backend
+COPY backend/ ./
+RUN mkdir -p classes && javac -d classes src/*.java
+
+FROM eclipse-temurin:21-jre-jammy
+WORKDIR /app/backend
+COPY --from=build /app/backend/ ./
+COPY frontend/ /app/frontend/
+ENV PORT=80
+ENV DATABASE_PATH=/tmp/libris.db
+CMD ["java", "-cp", "sqlite-jdbc-3.49.1.0.jar:postgresql-42.7.14.jar:classes", "JavaApp"]

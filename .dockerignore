@@ -1,0 +1,6 @@
+.git
+.vercel
+.env*
+backend/classes
+backend/*.db*
+presentation

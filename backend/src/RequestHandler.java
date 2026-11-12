@@ -22,26 +22,50 @@ abstract class RequestHandler implements HttpHandler
                         else if (needsLogin && !LoginHandler.isLoggedIn(ex))
                                 sendError(ex, 401, "Please log in first.");
                         else
-                                WebHelper.sendJson(ex, 200, reply(method, WebHelper.readParams(ex), ex));
+                                WebHelper.sendJson(ex, 200, answer(method, WebHelper.readParams(ex), ex));
                 }
                 catch (WrongInputException e)
                 {       sendError(ex, 400, e.getMessage()); }
                 catch (Exception e)
                 {
                         e.printStackTrace();
-                        sendError(ex, 500, "Something went wrong on the server. Check the terminal for details.");
+                        sendError(ex, 500, "Something went wrong. Please try again.");
                 }
         }
 
         private static void sendError(HttpExchange ex, int status, String message) throws IOException
         {       WebHelper.sendJson(ex, status, WebHelper.json(WebHelper.map("error", message))); }
 
+        private String answer(String method, Map<String, String> params, HttpExchange ex) throws Exception
+        {
+                if (!DatabaseConnection.online || !method.equals("POST"))
+                        return reply(method, params, ex);
+                DatabaseConnection.conn.setAutoCommit(false);
+                try
+                {
+                        DatabaseConnection.selectOne("select pg_advisory_xact_lock(73611825)");
+                        String response = reply(method, params, ex);
+                        DatabaseConnection.conn.commit();
+                        return response;
+                }
+                catch (Exception e)
+                {
+                        DatabaseConnection.conn.rollback();
+                        throw e;
+                }
+                finally
+                {       DatabaseConnection.conn.setAutoCommit(true); }
+        }
+
         private static boolean fromOurOwnPage(HttpExchange ex)
         {
                 String host = ex.getRequestHeaders().getFirst("Host");
                 String origin = ex.getRequestHeaders().getFirst("Origin");
                 boolean goodHost = ("localhost:" + JavaApp.PORT).equals(host) || ("127.0.0.1:" + JavaApp.PORT).equals(host);
-                return goodHost && (origin == null || origin.equals("http://" + host));
+                String publicHost = System.getenv("PUBLIC_HOST");
+                boolean onlineHost = host != null && (host.equals(publicHost) || host.equals(System.getenv("VERCEL_URL")));
+                return (goodHost && (origin == null || origin.equals("http://" + host)))
+                        || (onlineHost && (origin == null || origin.equals("https://" + host)));
         }
 
         protected static String required(Map<String, String> p, String key, String label) throws WrongInputException

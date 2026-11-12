@@ -1,22 +1,53 @@
 import java.sql.*;
 import java.util.*;
+import java.net.URI;
 
 class DatabaseConnection
 {
         public static Connection conn = null;
         public static Statement stmt = null;
         public static ResultSet rset = null;
+        public static final boolean online = System.getenv("DATABASE_URL") != null;
+        private static long newId;
+        private static String localFile;
 
         public static void connect(String dbpath)
         {       try
                 {
-                Class.forName("org.sqlite.JDBC");
-                conn = DriverManager.getConnection("jdbc:sqlite:" + dbpath);
-                stmt = conn.createStatement();
-                stmt.execute("PRAGMA foreign_keys = ON");
+                localFile = dbpath;
+                open();
                 }
                 catch (Exception e)
-                {       e.printStackTrace(); }
+                {       System.out.println("Could not connect to the database."); }
+        }
+
+        private static void open() throws SQLException
+        {
+                if (online)
+                {
+                        URI address = URI.create(System.getenv("DATABASE_URL"));
+                        String[] login = address.getUserInfo().split(":", 2);
+                        Properties settings = new Properties();
+                        settings.setProperty("user", login[0]);
+                        settings.setProperty("password", login[1]);
+                        settings.setProperty("sslmode", "verify-full");
+                        settings.setProperty("sslfactory", "org.postgresql.ssl.DefaultJavaSSLFactory");
+                        settings.setProperty("connectTimeout", "15");
+                        conn = DriverManager.getConnection("jdbc:postgresql://" + address.getHost() + ":"
+                                + (address.getPort() < 0 ? 5432 : address.getPort()) + address.getRawPath(), settings);
+                }
+                else
+                {
+                        conn = DriverManager.getConnection("jdbc:sqlite:" + localFile);
+                        conn.createStatement().execute("PRAGMA foreign_keys = ON");
+                }
+                stmt = conn.createStatement();
+        }
+
+        private static void checkConnection() throws SQLException
+        {
+                if (conn == null || conn.isClosed() || (online && conn.getAutoCommit() && !conn.isValid(2)))
+                        open();
         }
 
         public static void execute(String query)
@@ -29,7 +60,10 @@ class DatabaseConnection
         }
 
         public static void run(String command) throws SQLException
-        {       stmt.executeUpdate(command); }
+        {
+                checkConnection();
+                stmt.executeUpdate(command);
+        }
 
         public static List<Map<String, Object>> select(String query, Object... values) throws SQLException
         {
@@ -58,18 +92,37 @@ class DatabaseConnection
         public static int update(String query, Object... values) throws SQLException
         {
                 try (PreparedStatement ps = prepare(query, values))
-                {       return ps.executeUpdate(); }
+                {
+                        int count = ps.executeUpdate();
+                        if (online && query.trim().toLowerCase(Locale.ROOT).startsWith("insert "))
+                                try (ResultSet keys = ps.getGeneratedKeys())
+                                {
+                                        if (keys.next() && keys.getObject(1) instanceof Number)
+                                                newId = ((Number) keys.getObject(1)).longValue();
+                                }
+                        return count;
+                }
         }
 
         public static long lastId() throws SQLException
         {
+                if (online)
+                        return newId;
                 Map<String, Object> row = selectOne("select last_insert_rowid() as id");
                 return ((Number) row.get("id")).longValue();
         }
 
         private static PreparedStatement prepare(String query, Object[] values) throws SQLException
         {
-                PreparedStatement ps = conn.prepareStatement(query);
+                checkConnection();
+                if (online)
+                {
+                        query = query.replace("printf('B%04d', b.id)", "'B' || lpad(b.id::text, greatest(4, length(b.id::text)), '0')")
+                                .replace("printf('M%04d', m.id)", "'M' || lpad(m.id::text, greatest(4, length(m.id::text)), '0')")
+                                .replace(" like ?", " ilike ?");
+                }
+                PreparedStatement ps = online ? conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+                        : conn.prepareStatement(query);
                 for (int i = 0; i < values.length; i++)
                         ps.setObject(i + 1, values[i]);
                 return ps;

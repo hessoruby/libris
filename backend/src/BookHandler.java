@@ -19,7 +19,7 @@ class BookHandler extends RequestHandler
                                 "select " + COLUMNS + " from books b "
                               + "where b.title like ? or b.author like ? or b.isbn like ? "
                               + "or b.category like ? or printf('B%04d', b.id) like ? "
-                              + "order by b.title collate nocase", q, q, q, q, q);
+                              + "order by lower(b.title)", q, q, q, q, q);
                         return WebHelper.json(WebHelper.map("books", books));
                 }
                 String action = required(p, "action", "Action");

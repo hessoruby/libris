@@ -13,3 +13,5 @@ Libris - Library Management System (Team AJP_11)
    To get the sample data back: run reset.bat (Windows) or bash run/reset.sh (Mac / Linux), then start again.
 
 "Port 8080 is busy" means the app is already running in another window.
+
+The local app saves data in SQLite. The online app uses PostgreSQL when DATABASE_URL is set.

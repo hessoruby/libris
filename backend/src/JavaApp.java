@@ -4,16 +4,21 @@ import java.nio.file.*;
 
 public class JavaApp
 {
-        static final int PORT = 8080;
+        static final int PORT = Integer.parseInt(System.getenv().getOrDefault("PORT", "8080"));
 
         public static void main(String[] args) throws Exception
         {
+                if (System.getenv("VERCEL") != null && !DatabaseConnection.online)
+                {
+                        System.out.println("Set DATABASE_URL before starting the online app.");
+                        return;
+                }
                 if (!Files.exists(Paths.get("setup.sql")))
                 {
                         System.out.println("Please run this program from inside the backend folder.");
                         return;
                 }
-                DatabaseConnection.connect("javaapp.db");
+                DatabaseConnection.connect(System.getenv().getOrDefault("DATABASE_PATH", "javaapp.db"));
                 if (DatabaseConnection.conn == null)
                 {
                         System.out.println("Could not open javaapp.db. Is sqlite-jdbc-3.49.1.0.jar in the -cp list?");
@@ -28,7 +33,7 @@ public class JavaApp
                 }
                 HttpServer server;
                 try
-                {       server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0); }
+                {       server = HttpServer.create(new InetSocketAddress(System.getenv("PORT") == null ? "localhost" : "0.0.0.0", PORT), 0); }
                 catch (BindException e)
                 {
                         System.out.println("Port " + PORT + " is busy. Is the app already running in another terminal?");

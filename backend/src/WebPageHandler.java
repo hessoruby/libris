@@ -25,6 +25,7 @@ class WebPageHandler implements HttpHandler
                         WebHelper.send(ex, 404, "text/plain; charset=utf-8", "Page not found".getBytes(StandardCharsets.UTF_8));
                         return;
                 }
+                ex.getResponseHeaders().set("Cache-Control", "no-cache");
                 WebHelper.send(ex, 200, contentType(file.toString()), Files.readAllBytes(file));
         }
 
