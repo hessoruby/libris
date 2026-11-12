@@ -4,7 +4,7 @@ import java.util.*;
 class LoginHandler extends RequestHandler
 {
         private static final String COOKIE_OPTIONS = "; Path=/; HttpOnly; SameSite=Strict"
-                + (DatabaseConnection.online ? "; Secure" : "");
+                + (System.getenv("VERCEL") != null ? "; Secure" : "");
 
         LoginHandler()
         {       needsLogin = false; }

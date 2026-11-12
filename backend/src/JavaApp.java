@@ -8,11 +8,6 @@ public class JavaApp
 
         public static void main(String[] args) throws Exception
         {
-                if (System.getenv("VERCEL") != null && !DatabaseConnection.online)
-                {
-                        System.out.println("Set DATABASE_URL before starting the online app.");
-                        return;
-                }
                 if (!Files.exists(Paths.get("setup.sql")))
                 {
                         System.out.println("Please run this program from inside the backend folder.");
