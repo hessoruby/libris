@@ -1,3 +1,4 @@
+.impeccable/
 backend/classes/
 backend/*.db
 backend/*.db-*
