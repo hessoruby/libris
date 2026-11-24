@@ -4,7 +4,7 @@ import java.nio.file.*;
 
 public class JavaApp
 {
-        static final int PORT = 8080;
+        static final int PORT = Integer.parseInt(System.getenv().getOrDefault("LIBRIS_PORT", "8080"));
 
         public static void main(String[] args) throws Exception
         {

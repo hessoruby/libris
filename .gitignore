@@ -1,8 +1,4 @@
-.impeccable/
 backend/classes/
 backend/*.db
 backend/*.db-*
-.env
-.env.*
-.vercel/
-.DS_Store
+__pycache__/

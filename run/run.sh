@@ -8,6 +8,6 @@ if ! javac -d classes src/*.java; then
     exit 1
 fi
 
-( sleep 2; xdg-open http://localhost:8080 >/dev/null 2>&1 || open http://localhost:8080 >/dev/null 2>&1 ) &
+( sleep 2; xdg-open "http://localhost:${LIBRIS_PORT:-8080}" >/dev/null 2>&1 || open "http://localhost:${LIBRIS_PORT:-8080}" >/dev/null 2>&1 ) &
 
 java -cp "sqlite-jdbc-3.49.1.0.jar:classes" JavaApp

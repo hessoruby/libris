@@ -10,7 +10,8 @@ if errorlevel 1 (
     exit /b 1
 )
 
-start "" cmd /c "timeout /t 2 >nul & start http://localhost:8080"
+if not defined LIBRIS_PORT set "LIBRIS_PORT=8080"
+start "" cmd /c "timeout /t 2 >nul & start http://localhost:%LIBRIS_PORT%"
 
 java -cp "sqlite-jdbc-3.49.1.0.jar;classes" JavaApp
 pause
